@@ -6,7 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import StepIndicator from "./StepIndicator ";
 import { Eye, EyeOff } from "lucide-react";
-const FormComponent = ({ onSubmit }) => {
+import toast from "react-hot-toast";
+import axios from "axios";
+const FormComponent = () => {
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -16,26 +18,58 @@ const FormComponent = ({ onSubmit }) => {
     control,
     handleSubmit,
     watch,
+    reset,
     setValue,
     getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
+      name: "",
+      email: "",
+      dob: "",
+      address1: "",
+      address2: "",
+      city: "",
+      state: "",
+      zip: "",
       username: "",
       password: "",
       confirmPassword: "",
     },
   });
+
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
   const togglePassword = () => setShowPassword((prev) => !prev);
   const toggleConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
+
+  const submitForm = async (value) => {
+    const toastId = toast.loading("Please wait...");
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please fill all required fields!");
+      return;
+    } else {
+      try {
+        const { data } = await axios.post(`/api/form`, value);
+        if (data?.status) {
+          toast.success(data?.message, { id: toastId });
+          reset();
+          setStep(1);
+        } else {
+          toast.error(data?.message, { id: toastId });
+        }
+      } catch (err) {
+        toast.error(err?.message, { id: toastId });
+      }
+    }
+  };
+
   return (
     <div>
       <StepIndicator step={step} totalSteps={totalSteps} />
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(submitForm)}>
           {step === 1 && (
             <div>
               <h2 className="text-xl font-bold mb-4">Personal Information</h2>

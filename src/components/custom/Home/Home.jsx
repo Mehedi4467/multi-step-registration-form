@@ -4,9 +4,6 @@ import React from "react";
 import FormComponent from "./FormComponent";
 import { motion } from "framer-motion";
 const Home = () => {
-  const onSubmit = (data) => {
-    console.log("Form Submitted", data);
-  };
   return (
     <div className="min-h-screen bg-[url('/image/main_bg.webp')]  bg-cover bg-center bg-no-repeat">
       <div className="bg-opacity-80 bg-black h-screen flex justify-center items-center w-full">
@@ -17,7 +14,7 @@ const Home = () => {
           className="w-full"
         >
           <Card className="w-[40%] mx-auto bg-white rounded-3xl rounded-tr-none rounded-bl-none  p-5 shadow-lg">
-            <FormComponent onSubmit={onSubmit} />
+            <FormComponent />
           </Card>
         </motion.div>
       </div>
